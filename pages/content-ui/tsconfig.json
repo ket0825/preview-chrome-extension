@@ -1,18 +1,27 @@
 {
   "extends": "@chrome-extension-boilerplate/tsconfig/base",
   "compilerOptions": {
+
+    "module": "es2020",
+    "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
       "@src/*": [
         "src/*"
+      ],
+      "@content-ui/*": [
+        "./*"
       ]
+
     },
     "jsx": "react-jsx",
     "types": [
-      "chrome"
+      "chrome",
+      "vite/client",
     ]
   },
   "include": [
-    "src"
+    "src", 
+    "custom.d.ts"
   ]
 }

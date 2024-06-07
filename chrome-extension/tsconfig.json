@@ -1,8 +1,9 @@
 {
   "extends": "@chrome-extension-boilerplate/tsconfig/app.json",
   "compilerOptions": {
+    "module": "es2020",
     "baseUrl": "./",
-    "types": ["vite/client", "node", "chrome"],
+    "types": ["vite/client", "chrome"],
     "paths": {
       "@root/*": ["./*"],
       "@lib/*": ["lib/*"],

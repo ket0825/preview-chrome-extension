@@ -9,7 +9,10 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["../../dist/**", "dist/**", "build/**"],
-      "cache": false
+      "cache": false,
+      "env": [
+        "VITE_API_URL"
+      ]
     },
     "type-check": {
       "cache": false

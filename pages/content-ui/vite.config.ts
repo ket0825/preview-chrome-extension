@@ -1,3 +1,4 @@
+// vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'path';
@@ -15,6 +16,7 @@ function buildTailwindCss() {
 }
 
 export default defineConfig({
+  envDir: resolve(rootDir, '..', '..'),
   resolve: {
     alias: {
       '@src': srcDir,
@@ -34,7 +36,7 @@ export default defineConfig({
       formats: ['iife'],
       fileName: 'index',
     },
-    outDir: resolve(rootDir, '..', '..', 'dist', 'content-ui'),
+    outDir: resolve(rootDir, '..', '..', 'dist', 'content-ui'),    
     sourcemap: isDev,
     minify: isProduction,
     reportCompressedSize: isProduction,

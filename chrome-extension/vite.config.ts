@@ -12,6 +12,9 @@ const isProduction = !isDev;
 
 const outDir = resolve(rootDir, '..', 'dist');
 export default defineConfig({
+  envPrefix: 'VITE_', // default
+  // envDir: './', // default
+  envDir: resolve(rootDir, '..'), // 프로젝트 루트 디렉토리로 설정
   resolve: {
     alias: {
       '@root': rootDir,
@@ -41,6 +44,9 @@ export default defineConfig({
     modulePreload: true,
     rollupOptions: {
       external: ['chrome'],
+      output: {
+        format: 'es',
+      },
     },
   },
 });
