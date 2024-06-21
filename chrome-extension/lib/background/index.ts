@@ -56,15 +56,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'fetchReview'){
-    const type:string = request.type // 'OT0'
+    const type:string = request.type // 'RT0'
     const prid:string = request.prid
+    const topic_code:string = request.topic_code
     const apiUrl:string = import.meta.env.VITE_API_URL
     let url = `${apiUrl}/api/topic`
-    url += `?type=${type}&prid=${prid}`
+    url += `?type=${type}&prid=${prid}&topic_code=${topic_code}`
       
     fetch(url)
     .then(response => response.json())
-    .then(data => {
+    .then(data => {      
       sendResponse({ success: true, data: data });
     })
     .catch(error => {
