@@ -9,12 +9,12 @@ declare module 'child-props' {
 
 declare module 'text-props' {
   export interface TextProps {
-    type: 'text' | 'cardBody' | 'box'; // text, cardBody, box    
-    color: Color;
-    size: Size;
-    weight: Weight;
-    text: string;
-    align: 'text-left' | 'text-center' | 'text-right'; // left, center, right
+    type: 'text' | 'cardBody' | string; // text, cardBody, box    
+    color: Color | Color[] | string;
+    size: Size | string;
+    weight: Weight | string;
+    text: string | string;
+    align: 'text-left' | 'text-center' | 'text-right' | "" | string; // left, center, right
   }
   // fs: 32, 29, 24, 20, 16, 12
 
@@ -23,16 +23,33 @@ declare module 'text-props' {
   // bold, extra-bold, normal, light, extra-light
 }
 
+declare module 'highlight-text-props' {
+  export interface HighlightTextProps {
+    type: 'highlightText' | string; 
+    text: string[];
+    color: Color[] | string[];
+    size: Size[] | string[];
+    weight: Weight[] | string[];
+    align: 'text-left' | 'text-center' | 'text-right' | "" | string; // left, center, right
+  }
+  // fs: 32, 29, 24, 20, 16, 12
+
+  // gray300, gray800, blue500: 긍정, red500: 부정
+
+  // bold, extra-bold, normal, light, extra-light
+}
+
+
 type Color = 'text-gray-300' | 'text-gray-700' | 'text-gray-800' | 'text-blue-500' | 'text-red-500' | 'text-black' | 'text-gray-card-body';
-type Size = "text-xs" | "text-base" | "text-xl" | "text-2xl" | "text-3xl" ; // 12, 16, 20, 24, 30 -> 32, 
+type Size = "text-xs" | "text-sm" | "text-base" | "text-xl" | "text-2xl" | "text-3xl" ; // 12, 16, 20, 24, 30 -> 32, 
 type Weight = "font-normal" | "font-bold" | "font-extrabold" ; // 400, 700, 800
 
 declare module 'stack-props' {
   import { TextProps } from 'text-props';
 
   export interface StackProps {
-      textProps: TextProps[],
-      gap: 'gap-3'| 'gap-3.5' | 'gap-4' | "";  // 12, 14, 16        
+      textProps: (TextProps | HighlightTextProps)[],
+      gap: 'gap-y-2.5' | 'gap-y-3'| 'gap-y-3.5' | 'gap-y-4' | "";  // 10, 12, 14, 16 -> 18        
   }
   // export default ComponentArrayProps;
 }
@@ -45,7 +62,7 @@ declare module 'sticky-right-component-props' {
       verticalPadding: 'py-3' | 'py-10', // small and big size box
       horizontalPadding: 'px-6' | 'px-5' | '', // small and big and default size box
       borderRadius: 'rounded-lg' | 'rounded-2xl', // 12, 25 small and big size box 
-      borderColor: 'border-gray-300' | 'border-indigo-200',
+      borderColor: 'border-indigo-200' | "border-blue-100",
       borderWidth: 'border' // only 1px
       triggerPosition: number,
       disappearPosition: number,
@@ -60,6 +77,7 @@ declare module 'bbox' {
     y: number;
     width: number;
     height: number;
+    imageNumber: number;
   }
   // export default Bbox;
 }
@@ -70,6 +88,7 @@ declare module 'tooltip-props' {
     bbox: Bbox;
     isSelected: boolean;
     onClick: () => void;
+    index: number;
   }
   // export default TooltipProps;
 }
@@ -109,20 +128,13 @@ declare module 'ocr-topic-v1' {
     end_pos: number;
     positive_yn: null;
     sentiment_scale: null;    
-    bbox: Array;
+    bbox: [[number, number], [number, number], [number, number], [number, number]][];
+    image_number: number;
   };
 }
 
 declare module 'fetched-ocr-topic-v1' {
   export type FetchedOCRTopicV1 = OCRTopic[] | null;
-  // export default ProductFetch;
-}
-
-declare module 'selected-ocr-topic' {
-  import { FetchedOCRTopicV1 } from 'fetched-ocr-topic-v1';
-  export interface SelectedOCRTopic extends FetchedOCRTopicV1 {
-    selected: boolean[];    
-  }
 }
 
 declare module 'review-topic-v1' {
@@ -139,7 +151,9 @@ declare module 'review-topic-v1' {
     start_pos: number;
     end_pos: number;
     positive_yn: "Y" | "N";
-    sentiment_scale: number;       
+    sentiment_scale: number;     
+    bbox: null;
+    image_number: null;  
   };
 }
 
