@@ -1,9 +1,8 @@
 import { act, useEffect,  useRef, useState } from 'react';
-import { TooltipProps } from 'tooltip-props';
 import { FetchedProductV1 } from 'fetched-product-v1';
 import { FetchedOCRTopicV1 } from 'fetched-ocr-topic-v1';
 import CustomTooltips from './component/customTooltips';
-import CustomTooltip from './component/customTooltip';
+
 
 export default function App() {
 
@@ -34,7 +33,7 @@ export default function App() {
     }
 
     if (matchNvMid.current === "") {
-      console.log('matchNvMid is empty');
+      console.log('matchNvMid is empty'); 
       return;
     }
     
@@ -45,10 +44,10 @@ export default function App() {
         match_nv_mid: matchNvMid.current,
       },
       (response) => {
+        console.log(`response.url: ${response.url}`);
         if (response.success && response.data && response.data.length > 0) {
           console.log('DB에 있습니다.');
           product.current = response.data[0];
-
           chrome.runtime.sendMessage({
             action: 'fetchOCR',
             type: 'OT0',
@@ -57,9 +56,11 @@ export default function App() {
           (response) => {
             if (response.data) {
               ocr.current = response.data;             
+              console.log("ocr.current?.length:", ocr.current?.length)
               setIsLoading(false);
             } else if (response.error) {
               console.error(response.error, response.url, response.prid);
+              console.log('ERROR: OCR 데이터가 없습니다.');
             }
           });        
 
@@ -75,8 +76,7 @@ export default function App() {
           
     fetchData();
   
-
-     /** MutationObserver를 사용하여 원하는 요소가 추가되면 클릭 코드 실행 */
+/** MutationObserver를 사용하여 원하는 요소가 추가되면 클릭 코드 실행 */
      const targetNode = document.body; // 감시할 대상 노드 (body)
      const observerOptions = {
        childList: true, // 자식 노드 추가/제거 감시
