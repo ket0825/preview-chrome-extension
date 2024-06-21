@@ -3,11 +3,11 @@ import { TextProps } from 'text-props'
 
 const Text:React.FC<TextProps> = ({text, color, size, weight, align}) => {
     
-    const className = `${size} ${weight} ${color} ${align} whitespace-pre-line`
+    const className = `${size} ${weight} ${color} ${align} font-Inter whitespace-pre-line`
     return (
-        <p className={className}>
+        <div className={className}>
             {text}
-        </p>
+        </div>
     )
 }
 
