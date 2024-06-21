@@ -19,3 +19,10 @@
 
 # compiled
 apps/chrome-extension/public/manifest.json
+
+# my own
+.vscode
+*.zip
+*.css
+
+
