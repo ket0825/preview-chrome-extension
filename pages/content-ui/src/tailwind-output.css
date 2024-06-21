@@ -51,7 +51,7 @@
   --tw-contain-size:  ;
   --tw-contain-layout:  ;
   --tw-contain-paint:  ;
-  --tw-contain-style:  
+  --tw-contain-style:  ;
 }
 
 ::backdrop {
@@ -105,194 +105,271 @@
   --tw-contain-size:  ;
   --tw-contain-layout:  ;
   --tw-contain-paint:  ;
-  --tw-contain-style:  
+  --tw-contain-style:  ;
 }
 
 .pointer-events-none {
-  pointer-events: none
+  pointer-events: none;
 }
 
 .fixed {
-  position: fixed
+  position: fixed;
 }
 
 .absolute {
-  position: absolute
+  position: absolute;
 }
 
 .-top-full {
-  top: -100%
+  top: -100%;
 }
 
 .left-full {
-  left: 100%
+  left: 100%;
 }
 
-.top-1\/4 {
-  top: 25%
+.right-0 {
+  right: 0px;
+}
+
+.top-\[134px\] {
+  top: 134px;
 }
 
 .z-10 {
-  z-index: 10
+  z-index: 10;
+}
+
+.z-\[2000\] {
+  z-index: 2000;
 }
 
 .ml-1 {
-  margin-left: 0.25rem
+  margin-left: 0.25rem;
 }
 
 .mt-16 {
-  margin-top: 4rem
+  margin-top: 4rem;
 }
 
-.w-\[626px\] {
-  width: 626px
+.flex {
+  display: flex;
+}
+
+.w-\[584px\] {
+  width: 584px;
 }
 
 .min-w-\[123px\] {
-  min-width: 123px
+  min-width: 123px;
 }
 
 .max-w-\[123px\] {
-  max-width: 123px
+  max-width: 123px;
 }
 
 .translate-x-0 {
   --tw-translate-x: 0px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.gap-4 {
-  gap: 1rem
+.flex-col {
+  flex-direction: column;
 }
 
-.overflow-x-hidden {
-  overflow-x: hidden
+.gap-y-2 {
+  row-gap: 0.5rem;
+}
+
+.gap-y-2\.5 {
+  row-gap: 0.625rem;
+}
+
+.gap-y-3 {
+  row-gap: 0.75rem;
+}
+
+.gap-y-3\.5 {
+  row-gap: 0.875rem;
+}
+
+.gap-y-4 {
+  row-gap: 1rem;
 }
 
 .whitespace-nowrap {
-  white-space: nowrap
-}
-
-.whitespace-pre {
-  white-space: pre
+  white-space: nowrap;
 }
 
 .whitespace-pre-line {
-  white-space: pre-line
+  white-space: pre-line;
 }
 
 .rounded {
-  border-radius: 0.25rem
+  border-radius: 0.25rem;
 }
 
 .rounded-lg {
-  border-radius: 0.5rem
+  border-radius: 0.5rem;
 }
 
 .border {
-  border-width: 1px
+  border-width: 1px;
 }
 
-.border-gray-300 {
+.border-blue-100 {
   --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity))
+  border-color: rgb(219 234 254 / var(--tw-border-opacity));
 }
 
-.bg-gray-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity))
+.border-indigo-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(199 210 254 / var(--tw-border-opacity));
 }
 
 .bg-gray-800 {
   --tw-bg-opacity: 1;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity))
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
 }
 
 .bg-white {
   --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity))
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
 .p-2 {
-  padding: 0.5rem
+  padding: 0.5rem;
 }
 
-.p-5 {
-  padding: 1.25rem
+.p-3 {
+  padding: 0.75rem;
 }
 
 .px-6 {
   padding-left: 1.5rem;
-  padding-right: 1.5rem
+  padding-right: 1.5rem;
 }
 
 .py-3 {
   padding-top: 0.75rem;
-  padding-bottom: 0.75rem
+  padding-bottom: 0.75rem;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .text-center {
-  text-align: center
+  text-align: center;
+}
+
+.font-Inter {
+  font-family: Inter;
 }
 
 .text-2xl {
   font-size: 1.5rem;
-  line-height: 2rem
+  line-height: 2rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 .text-sm {
   font-size: 0.875rem;
-  line-height: 1.25rem
+  line-height: 1.25rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
 }
 
 .font-bold {
-  font-weight: 700
+  font-weight: 700;
+}
+
+.font-extrabold {
+  font-weight: 800;
 }
 
 .font-normal {
-  font-weight: 400
+  font-weight: 400;
+}
+
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.text-blue-500 {
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity));
 }
 
 .text-gray-700 {
   --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity))
+  color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+
+.text-gray-800 {
+  --tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity));
+}
+
+.text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 
 .text-white {
   --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity))
+  color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
 .opacity-0 {
-  opacity: 0
+  opacity: 0;
 }
 
 .opacity-30 {
-  opacity: 0.3
+  opacity: 0.3;
 }
 
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 .shadow-md {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 .filter {
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 .transition-opacity {
   transition-property: opacity;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms
+  transition-duration: 150ms;
 }
 
 .duration-300 {
-  transition-duration: 300ms
+  transition-duration: 300ms;
+}
+
+@font-face {
+  font-family: 'Inter';
+
+  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap');
 }
