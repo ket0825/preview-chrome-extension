@@ -12,29 +12,30 @@ interface CustomTooltipsProps {
   ocrTopics: FetchedOCRTopicV1;
 }
 
+const defaultStacksProps: StackProps[] = [
+  {
+    stackPropsList: [
+      {
+        text: '스펙을 클릭하고,\n실 사용자의 리뷰를 만나보세요!',
+        color: 'text-gray-700',
+        size: 'text-2xl',
+        weight: 'font-bold',
+        type: 'text',
+        align: 'text-center',
+      },
+    ],
+    gap: '',
+  },
+];
+
 const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
     
-    const defaultStacksProps: StackProps[] = [
-        {
-          textProps: [
-            {
-              text: '스펙을 클릭하고,\n실 사용자의 리뷰를 만나보세요!',
-              color: 'text-gray-700',
-              size: 'text-2xl',
-              weight: 'font-bold',
-              type: 'text',
-              align: 'text-center',
-            },
-          ],
-          gap: '',
-        },
-      ];
-
     const [selectedOCRTopicIdx, setSelectedOCRTopicIdx] = useState<number>(-1);
+    const [isVisibleStickyRightComponent, setIsVisibleStickyRightComponent] = useState<boolean>(false);
     const [reviews, setReviews] = useState<FetchedReviewTopicV1>(null);
     const [imgElementsSizes, setImgElementsSizes] = useState<{ real2clientRatio: number; extension: string; x: number; y: number; naturalHeight: number, imageNumber:number }[]>([]);    
     const newbboxs = useRef<Bbox[]>([]); // bboxsArray를 newbboxs로 정리
-    const [isReady, setIsReady] = useState<boolean>(false); // 
+    const [isTooltipReady, setIsTooltipReady] = useState<boolean>(false); // 
     const [stacksProps, setStacksProps] = useState<StackProps[]>(defaultStacksProps);
 
     // bboxsArray를 newbboxs로 정리
@@ -211,7 +212,8 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
     console.log("newbboxs length:", newbboxs.current.length); //processedBboxs length: 95
     // console.log(`newbboxs ${JSON.stringify(newbboxs, null, 2)}`); 
     
-    setIsReady(true);
+    setIsTooltipReady(true);
+    setIsVisibleStickyRightComponent(true);
 
   }, [imgElementsSizes, ocrTopics]);
 
@@ -251,7 +253,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
     } else if (reviews.length === 0) {
         const stacksProps: StackProps[] = [
             {
-              textProps: [
+              stackPropsList: [
                 {   // Head 관련 텍스트 형식
                   text: `${ocrTopics![selectedOCRTopicIdx].text}`,
                   color: 'text-gray-800',
@@ -264,7 +266,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
               gap: "",
             },
             {
-                textProps: [
+              stackPropsList: [
                     {
                         text: '이 스펙, 실사용자들의 후기를 만나보세요',
                         color: 'text-gray-800',
@@ -285,7 +287,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
                 gap: 'gap-y-3.5',
             },
             {
-                textProps: [
+              stackPropsList: [
                     {
                         text: '👎 부정적인 리뷰만 모았어요',
                         color: 'text-gray-800',
@@ -306,7 +308,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
                 gap: 'gap-y-2.5',
             },
             {
-                textProps: [
+              stackPropsList: [
                     {
                         text: '👍 긍정적인 리뷰도 있어요',
                         color: 'text-gray-800',
@@ -325,7 +327,24 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
                     }
                 ],
                 gap: 'gap-y-2.5',
-            }
+            }, {
+              stackPropsList: [
+                {
+                  type: 'outlinedButton',
+                  text: '닫기',
+                  color: 'text-red-500',
+                  size: 'text-base',
+                  weight: 'font-semibold',
+                  onClick: () => setIsVisibleStickyRightComponent(false),
+                  textAlign: 'text-center',
+                  buttonJustify: 'flex justify-end',
+                  borderColor: 'border-red-500',
+                  borderWidth: 'border',
+                  borderRadius: 'rounded-md',                
+                }
+              ],
+              gap: 'gap-y-2.5',
+            },
           ];
           setStacksProps(stacksProps);
           return;        
@@ -368,7 +387,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
         
         const stacksProps: StackProps[] = [
           {
-            textProps: [
+            stackPropsList: [
               {
                 text: `${ocrTopics![selectedOCRTopicIdx].text}`,
                 color: 'text-gray-800',
@@ -381,7 +400,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
             gap: "gap-y-4",
           },
           {
-            textProps: [
+            stackPropsList: [
               {
                 text: '이 스펙, 실사용자들의 후기를 만나보세요',
                 color: 'text-gray-800',
@@ -402,7 +421,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
             gap: 'gap-y-3.5',
           },
           {
-            textProps: [
+            stackPropsList: [
               {
                 text: '👎 부정적인 리뷰만 모았어요',
                 color: 'text-gray-800',
@@ -430,7 +449,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
             gap: 'gap-y-2.5',
           },
           {
-            textProps: [
+            stackPropsList: [
               {
                 text: '👍 긍정적인 리뷰도 있어요',
                 color: 'text-gray-800',
@@ -456,7 +475,24 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
               }]),
             ],
             gap: 'gap-y-2.5',
-          }
+          }, {
+            stackPropsList: [
+              {
+                type: 'outlinedButton',
+                text: '닫기',
+                color: 'text-red-500',
+                size: 'text-base',
+                weight: 'font-semibold',
+                onClick: () => setIsVisibleStickyRightComponent(false),
+                textAlign: 'text-center',
+                buttonJustify: 'flex justify-end',
+                borderColor: 'border-red-500',
+                borderWidth: 'border',
+                borderRadius: 'rounded-md',                
+              }
+            ],
+            gap: 'gap-y-2.5',
+          },
         ];
       
         setStacksProps(stacksProps);
@@ -466,23 +502,27 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
   
   return (
     <div className="flex">
-        {isReady ?
+        {isTooltipReady ?
         newbboxs.current.map((bbox, idx) => (
           <CustomTooltip
             key={idx}
             text="실사용자 리뷰보기"
             bbox={bbox}
             isSelected={selectedOCRTopicIdx === idx}
-            onClick={() => setSelectedOCRTopicIdx(idx)}
+            onClick={() => {
+              setSelectedOCRTopicIdx(idx)
+              setIsVisibleStickyRightComponent(true)
+            }}
             index={idx}
           />
         )) : null
         }
       <div>
-        {ocrTopics === null ? null : isReady && ocrTopics.length !== 0 && selectedOCRTopicIdx === -1 ? (
+        {ocrTopics !== null && ocrTopics.length != 0 && isTooltipReady && isVisibleStickyRightComponent ? 
+        selectedOCRTopicIdx === -1 ? (
           <StickyRightComponent
             stacksProps={stacksProps}
-            verticalPadding="py-3"
+            verticalPadding="py-9"
             horizontalPadding=""
             borderRadius="rounded-lg"
             borderColor="border-blue-100"
@@ -490,9 +530,9 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
             triggerPosition={imgElementsSizes[0].y-134} // 네이버의 플로팅탭
             // disappearPosition={imgElementsSizes[imgElementsSizes.length-1].y + imgElementsSizes[imgElementsSizes.length-1].naturalHeight * imgElementsSizes[imgElementsSizes.length-1].real2clientRatio}
             disappearPosition={imgElementsSizes[imgElementsSizes.length-1].y + imgElementsSizes[imgElementsSizes.length-1].naturalHeight * imgElementsSizes[imgElementsSizes.length-1].real2clientRatio + 15000}
-            height={138}
+            visible={true}
           />
-        ) : isReady && ocrTopics.length !== 0 && selectedOCRTopicIdx !== -1 ? (
+        ) : (
           <StickyRightComponent
             stacksProps={stacksProps}
             verticalPadding="py-3"
@@ -502,7 +542,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
             borderWidth="border"
             triggerPosition={imgElementsSizes[0].y-134} // 네이버의 플로팅탭
             disappearPosition={imgElementsSizes[imgElementsSizes.length-1].y + imgElementsSizes[imgElementsSizes.length-1].naturalHeight * imgElementsSizes[imgElementsSizes.length-1].real2clientRatio + 15000}
-            height={697}
+            visible={isVisibleStickyRightComponent}
           />
         ) : null
       }

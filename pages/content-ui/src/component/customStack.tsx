@@ -3,8 +3,9 @@ import React from 'react'
 import CardBody from '@src/component/cardBody';
 import Text from '@src/foundation/text';
 import HighlightText from '@src/foundation/highlightText';
+import OutlinedButton from '@src/foundation/outlinedButton';
 
-const CustomStack: React.FC<StackProps> = ({textProps, gap}) => {
+const CustomStack: React.FC<StackProps> = ({stackPropsList, gap}) => {
 
   // for tailwind css dynamically
   const gapsVariant = {
@@ -23,36 +24,51 @@ const CustomStack: React.FC<StackProps> = ({textProps, gap}) => {
         rowGap: gap === 'gap-y-2.5' ? '0.625rem' : gap === 'gap-y-3.5' ? '0.875rem' : gap === 'gap-y-4' ? '1rem' : gap === 'gap-y-3' ? '0.75rem' : '0rem'
       }}
     >
-      {textProps.map((textProp, index) => (
-        textProp.type === 'text' ? (
+      {stackPropsList.map((stackProp, index) => (
+        stackProp.type === 'text' ? (
           <Text 
             key={index}   
-            text={textProp.text}
-            color={textProp.color}
-            size={textProp.size}
-            weight={textProp.weight}
-            align={textProp.align}        
+            text={stackProp.text}
+            color={stackProp.color}
+            size={stackProp.size}
+            weight={stackProp.weight}
+            align={stackProp.align}        
             type='text'
           />
-        ) : textProp.type === 'cardBody' ? (
+        ) : stackProp.type === 'cardBody' ? (
           <CardBody 
             key={index}   
-            text={textProp.text}
-            color={textProp.color}
-            size={textProp.size}
-            weight={textProp.weight}
+            text={stackProp.text}
+            color={stackProp.color}
+            size={stackProp.size}
+            weight={stackProp.weight}
             type='cardBody'   
-            align={textProp.align}
+            align={stackProp.align}
           />
-        ) : textProp.type === 'highlightText' ? (
+        ) : stackProp.type === 'highlightText' ? (
           <HighlightText 
             key={index}   
-            text={textProp.text}
-            color={textProp.color}
-            size={textProp.size}
-            weight={textProp.weight}
-            align={textProp.align}
+            text={stackProp.text}
+            color={stackProp.color}
+            size={stackProp.size}
+            weight={stackProp.weight}
+            align={stackProp.align}
             type='highlightText'
+          />
+        ) : stackProp.type == 'outlinedButton' ? (
+          <OutlinedButton 
+            key={index}   
+            text={stackProp.text}
+            color={stackProp.color}
+            size={stackProp.size}
+            weight={stackProp.weight}
+            onClick={stackProp.onClick}
+            textAlign={stackProp.textAlign}
+            buttonJustify={stackProp.buttonJustify}
+            type='outlinedButton'
+            borderColor={stackProp.borderColor}
+            borderWidth={stackProp.borderWidth}
+            borderRadius={stackProp.borderRadius}
           />
         ) : null
       ))}

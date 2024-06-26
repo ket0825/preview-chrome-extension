@@ -39,19 +39,39 @@ declare module 'highlight-text-props' {
   // bold, extra-bold, normal, light, extra-light
 }
 
+declare module 'button-props' {
+  export interface ButtonProps {
+    type: 'outlinedButton' | string;
+    text: string;
+    color: Color;
+    size: Size;
+    weight: Weight;
+    onClick: () => void;
+    textAlign: 'text-left' | 'text-center' | 'text-right' | "" | string; // left, center, right
+    buttonJustify: 'flex justify-end' | 'flex justify-center' | 'flex justify-end' | "" | string; // left, center, right
+  }
+
+  export interface OutlinedButtonProps extends ButtonProps {
+    borderColor: 'border-red-500';
+    borderWidth: 'border' // only 1px
+    borderRadius: 'rounded-md' | 'rounded-lg' | 'rounded-2xl', // 6, 12, 25 button, small and big size box
+  }
+}
+
+
+
 
 type Color = 'text-gray-300' | 'text-gray-700' | 'text-gray-800' | 'text-blue-500' | 'text-red-500' | 'text-black' | 'text-gray-card-body';
 type Size = "text-xs" | "text-sm" | "text-base" | "text-xl" | "text-2xl" | "text-3xl" ; // 12, 16, 20, 24, 30 -> 32, 
-type Weight = "font-normal" | "font-bold" | "font-extrabold" ; // 400, 700, 800
+type Weight = "font-normal" | "font-semibold" |  "font-bold" | "font-extrabold" ; // 400, 600, 700, 800
 
 declare module 'stack-props' {
   import { TextProps } from 'text-props';
 
   export interface StackProps {
-      textProps: (TextProps | HighlightTextProps)[],
+      stackPropsList: (TextProps | HighlightTextProps | ButtonProps)[],
       gap: 'gap-y-2.5' | 'gap-y-3'| 'gap-y-3.5' | 'gap-y-4' | "";  // 10, 12, 14, 16 -> 18        
-  }
-  // export default ComponentArrayProps;
+  }  
 }
 
 declare module 'sticky-right-component-props' {
@@ -59,14 +79,14 @@ declare module 'sticky-right-component-props' {
 
   export interface StickyRightComponentProps {
       stacksProps: StackProps[],
-      verticalPadding: 'py-3' | 'py-10', // small and big size box
+      verticalPadding: 'py-3' | 'py-9' | "", // small and big size box
       horizontalPadding: 'px-6' | 'px-5' | '', // small and big and default size box
       borderRadius: 'rounded-lg' | 'rounded-2xl', // 12, 25 small and big size box 
       borderColor: 'border-indigo-200' | "border-blue-100",
       borderWidth: 'border' // only 1px
       triggerPosition: number,
       disappearPosition: number,
-      height: number,
+      visible: boolean,
     }
   // export default StickyRightComponentProps;
 }
