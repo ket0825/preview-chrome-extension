@@ -181,3 +181,21 @@ declare module 'fetched-review-topic-v1' {
   export type FetchedReviewTopicV1 = ReviewTopicV1[] | null;
   // export default ProductFetch;
 }
+
+declare module 'image-info' {
+  export interface ImageInfo {
+    real2clientRatio: number;
+    extension: string;
+    x: number;
+    y: number;
+    naturalHeight: number;
+    imageNumber: number;
+  }
+}
+
+declare module 'custom-tooltips-props' {
+  export interface CustomTooltipsProps {
+    ocrTopics: FetchedOCRTopicV1;
+    imgElementsSizes: ImageInfo[];
+  }
+}

@@ -1,16 +1,12 @@
 // customTooltips.tsx
 
-import { FetchedOCRTopicV1 } from 'fetched-ocr-topic-v1';
 import React, { useEffect, useRef, useState } from 'react';
 import StickyRightComponent from './stickyRightComponent';
 import { StackProps } from 'stack-props';
 import { FetchedReviewTopicV1 } from 'fetched-review-topic-v1';
 import CustomTooltip from './customTooltip';
 import { Bbox } from 'bbox';
-
-interface CustomTooltipsProps {
-  ocrTopics: FetchedOCRTopicV1;
-}
+import { CustomTooltipsProps } from 'custom-tooltips-props';
 
 const defaultStacksProps: StackProps[] = [
   {
@@ -28,12 +24,11 @@ const defaultStacksProps: StackProps[] = [
   },
 ];
 
-const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
+const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics, imgElementsSizes }) => {
     
     const [selectedOCRTopicIdx, setSelectedOCRTopicIdx] = useState<number>(-1);
     const [isVisibleStickyRightComponent, setIsVisibleStickyRightComponent] = useState<boolean>(false);
-    const [reviews, setReviews] = useState<FetchedReviewTopicV1>(null);
-    const [imgElementsSizes, setImgElementsSizes] = useState<{ real2clientRatio: number; extension: string; x: number; y: number; naturalHeight: number, imageNumber:number }[]>([]);    
+    const [reviews, setReviews] = useState<FetchedReviewTopicV1>(null);    
     const newbboxs = useRef<Bbox[]>([]); // bboxsArray를 newbboxs로 정리
     const [isTooltipReady, setIsTooltipReady] = useState<boolean>(false); // 
     const [stacksProps, setStacksProps] = useState<StackProps[]>(defaultStacksProps);
@@ -97,73 +92,6 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
     }, [ocrTopics]);
 
   useEffect(() => {
-    if (ocrTopics === null || ocrTopics.length === 0) {
-      return;
-    }
-
-    const targetNode = document.body;
-    const observerOptions = {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['id'],
-    };
-
-    // 렌더링 이슈 때문에 확확 아래로 내려야 맞는 위치에 딱 나옴.
-    const detailFromBrandObserver = new MutationObserver((mutationsList, observer) => {
-      mutationsList.forEach((mutation) => {
-        if (mutation.type === 'childList' || mutation.type === 'attributes') {
-          const targetElement = document.getElementById('detailFromBrand');
-
-          if (targetElement) {                        
-            const offsetParent = targetElement.offsetParent as HTMLElement;
-            const parentRect = offsetParent.getBoundingClientRect();
-            const parentX = parseFloat((parentRect.left + window.scrollX).toFixed(2));
-            const parentY = parseFloat((parentRect.top + window.scrollY).toFixed(2));
-            console.log(`parentX: ${parentX}, parentY: ${parentY}`)
-
-            let real2clientRatio = 0;
-            setTimeout(() => {
-              const imgElementSizesList = Array.from(targetElement.childNodes)
-                .filter((childNode): childNode is HTMLImageElement => childNode instanceof HTMLImageElement)
-                .filter((imgElement) => imgElement.src.endsWith('.jpg') || imgElement.src.endsWith('.png') || imgElement.src.endsWith('.jpeg'))
-                .map((imgElement, idx) => {
-                  if (real2clientRatio === 0) {
-                    real2clientRatio = parseFloat((imgElement.width / imgElement.naturalWidth).toFixed(2));
-                  }                  
-                  const extension = imgElement.src.split('.').pop();
-                  const x = imgElement.offsetLeft + parentX;
-                  const y = imgElement.offsetTop + parentY;
-                  const imageNumber = idx;
-
-                  console.log(`x: ${x}, y: ${y}`)
-
-                  const naturalHeight = parseFloat((imgElement.height * (1 / real2clientRatio)).toFixed(2));
-
-                  return {
-                    real2clientRatio,
-                    extension: extension!,
-                    x,
-                    y,
-                    naturalHeight,
-                    imageNumber
-                  };
-                });
-              
-              setImgElementsSizes(imgElementSizesList);
-            }, 1000);
-
-            observer.disconnect();
-          }
-        }
-      });
-    });
-
-    detailFromBrandObserver.observe(targetNode, observerOptions);
-    
-  }, [ocrTopics]);
-
-  useEffect(() => {
     // console.log("imgElementsSizes UseEffect 진입")
 
     if (imgElementsSizes.length === 0) {
@@ -172,7 +100,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
 
     const processedBboxs: Bbox[] = [];
 
-    console.log(`newbboxs.current: ${JSON.stringify(newbboxs.current, null, 2)}`)
+    // console.log(`newbboxs.current: ${JSON.stringify(newbboxs.current, null, 2)}`)
 
     imgElementsSizes.forEach((imgElementSize) => {
       if (imgElementSize.extension === 'jpg' || imgElementSize.extension === 'png' || imgElementSize.extension === 'jpeg') {
@@ -512,6 +440,7 @@ const CustomTooltips: React.FC<CustomTooltipsProps> = ({ ocrTopics }) => {
             onClick={() => {
               setSelectedOCRTopicIdx(idx)
               setIsVisibleStickyRightComponent(true)
+              console.log(`bbox x: ${bbox.x}, bbox y: ${bbox.y}, bbox width: ${bbox.width}, bbox height: ${bbox.height}, imageNumber: ${bbox.imageNumber}`)
             }}
             index={idx}
           />
