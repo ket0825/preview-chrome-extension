@@ -1,3 +1,4 @@
+// chrome-extension\vite.config.ts
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import libAssetsPlugin from '@laynezh/vite-plugin-lib-assets';
