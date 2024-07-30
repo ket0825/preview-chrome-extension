@@ -3,41 +3,41 @@ import { FetchedProductV1 } from 'fetched-product-v1';
 import { FetchedOCRTopicV1 } from 'fetched-ocr-topic-v1';
 import CustomTooltips from './component/customTooltips';
 import { ImageInfo } from 'image-info';
+import { productStorage } from '@chrome-extension-boilerplate/shared/index';
 
 
-const useLoadingComplete = (ocr: React.MutableRefObject<FetchedOCRTopicV1>, imgElementsSizes: ImageInfo[]) => {
-  
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const INTERVAL_TIME = 1 * 5 * 1000;
+const INACTIVE_TIME = 5 * 60 * 1000;
 
-  useEffect(() => {
-    if (ocr.current && imgElementsSizes.length > 0) {
-      console.log('loading complete');
-      setIsLoading(false);        
+type MouseEventFunction = (...args: MouseEvent[]) => void;
+
+function MouseEventThrottle<T extends MouseEventFunction>(
+  func: T,
+  limit: number
+): (...args: Parameters<T>) => void {
+  let lastFunc: ReturnType<typeof setTimeout>;
+  let lastRan: number;
+
+  return function(this: ThisParameterType<T>, ...args: Parameters<T>): void {
+    if (!lastRan) {
+      func.apply(this, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(() => {
+        if ((Date.now() - lastRan) >= limit) {
+          func.apply(this, args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
     }
-  }, [ocr, imgElementsSizes]);
-
-  return isLoading;
+  };
 }
 
-const useMousePosition = () => {
-    const positionRef = useRef({ x: 0, y: 0 });
-    const updateMousePosition = (e: MouseEvent) => { 
-      positionRef.current = { x: e.pageX, y: e.pageY };
-    };
 
-    window.addEventListener('mousemove', updateMousePosition);
-
-    const interval = setInterval(() => {
-      console.log('Mouse position:', positionRef.current);
-    }, 1000);
-  
-    return () => {
-      window.removeEventListener('mousemove', updateMousePosition);
-      clearInterval(interval);
-    };
-}
-
-const timeoutPromise = (ms:number) => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms));
+const timeoutPromise = (ms:number) => new Promise(
+  (_, reject) => setTimeout(
+    () => reject(new Error('Timeout')), ms));
 
 const handleButtonDetailClick = (buttonElement: HTMLElement) => {
   buttonElement.click();
@@ -72,18 +72,122 @@ const queryElementWithTimeout = async (selector:string, timeout:number) => {
 };
 
 
-
 export default function App() {
-  
+    
   const matchNvMid = useRef<string>('');
   const product = useRef<FetchedProductV1>(null);
   const ocr = useRef<FetchedOCRTopicV1>(null);
-  const renderingCount = useRef<number>(0);  
+  const renderingCount = useRef<number>(0);    
+  const positionRef = useRef({ x: 0, y: 0 });
+  const intervalRef = useRef<number | null>(null);
 
   const [imgElementsSizes, setImgElementsSizes] = useState<ImageInfo[]>([]);
+  const [productReady, setProductReady] = useState<boolean>(false);
+  const [ocrReady, setOcrReady] = useState<boolean>(false);
   
-  const isLoading = useLoadingComplete(ocr, imgElementsSizes);
   renderingCount.current += 1;
+
+  const handleMouseMove = MouseEventThrottle((e: MouseEvent) => {        
+    if (updateMousePosition(e)) {     
+      productStorage.getProductState(product.current!.prid).then((data) => {
+        if (data.lastActiveTime === null || data.category === null) {                    
+           // write active log    
+          chrome.runtime.sendMessage({
+            action: 'writeLog',
+            event_data: null,
+            event_type: 'active',
+            link: null,
+            product: product.current!.prid,                
+          }, (response) => {
+            if (response.success) {
+              console.log(`active log written`);
+            } else {
+              console.error(response.error);
+            }
+          });   
+        }
+      });
+
+      // storage에 저장 혹은 갱신.
+      productStorage.setProductState(product.current!.prid, product.current!.caid)
+        .then(() => {
+        console.log(`product ${product.current?.name} lastActiveTime renewed`);
+        
+        if (intervalRef.current === null) {
+          console.log('start monitoring...');
+          startMonitoring();    
+        }                
+      });
+    }
+  }, 5000); // 5초에 한 번만 실행. 이 부분 OK.  
+
+  const updateMousePosition = (e: MouseEvent) => {
+        if (e.pageX === positionRef.current.x 
+          && e.pageY === positionRef.current.y) {
+          return false;
+        }
+    
+        positionRef.current = { x: e.pageX, y: e.pageY };
+        return true;
+      };
+
+  const startMonitoring = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    intervalRef.current = setInterval(() => {        
+      productStorage.getProductState(product.current!.prid).then((data) => {      
+        if (Date.now() - data.lastActiveTime >= INACTIVE_TIME && data.lastActiveTime !== null) {
+            chrome.runtime.sendMessage({
+              action: 'writeLog',
+              event_data: null,
+              event_type: 'inactive',
+              link: null,
+              product: product.current!.prid,                
+            }, (response) => {
+              if (response.success) {
+                console.log('inactive log written');
+              } else {
+                console.error(response.error);
+              }
+            });          
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current);
+            }
+            intervalRef.current = null
+          } else {              
+            if (data.lastActiveTime !== null) {
+              console.log(`NOT REMOVED: time elapsed: ${Date.now() - data?.lastActiveTime}`); // null일 때는 date.now()로 나옴.
+            }
+          }            
+        });
+      }, INTERVAL_TIME) // 5초마다 마우스 위치 갱신      
+       
+  }
+
+  // const handleTabActivated = (activeInfo: chrome.tabs.TabActiveInfo) => {
+  //   try {
+  //     if (product.current && ocr.current) {
+  //       productStorage.getProductState(product.current!.prid).then((data) => {
+  //         if (!data.lastActiveTime) {
+  //           productStorage.setProductState(product.current!.prid).then(() => {
+  //             console.log(`product ${product.current?.name} lastActiveTime renewed`);
+  //           });
+  //           startMonitoring();
+  //         } else {
+  //           productStorage.setProductState(product.current!.prid).then(() => {
+  //             console.log(`product ${product.current?.name} lastActiveTime extended`);
+  //           });
+  //         }        
+  //       });  
+  //     }      
+  //   } catch (error) {
+  //     console.log('Error:', error, "product.current:", product.current, "ocr.current:", ocr.current);
+  //   }
+    
+  // }
 
   const processImage = (imgElement: HTMLImageElement, imageNumber:number) => {      
     return new Promise<ImageInfo>((resolve) => {
@@ -176,41 +280,84 @@ export default function App() {
     }
     
     const fetchData = () => {
-      
-      chrome.runtime.sendMessage({
-        action: 'fetchProduct',
-        match_nv_mid: matchNvMid.current,
-      },
-      (response) => {
-        console.log(`response.url: ${response.url}`);
-        if (response.success && response.data && response.data.length > 0) {
-          console.log('DB에 있습니다.');
-          product.current = response.data[0];
-          chrome.runtime.sendMessage({
-            action: 'fetchOCR',
-            type: 'OT0',
-            prid: product.current?.prid,
-          },
-          (response) => {
-            if (response.data) {
-              ocr.current = response.data;             
-              console.log("ocr.current?.length:", ocr.current?.length)
-              // checkLoadingComplete();
-              console.log("마지막 ocr 요소:", ocr.current?.[ocr.current?.length - 1]);
-            } else if (response.error) {
-              console.error(response.error, response.url, response.prid);
-              console.log('ERROR: OCR 데이터가 없습니다.');    
-            }
-          });                  
-        } else if (response.error) {
-          console.error(response.error, response.url);
-        } else {
-          console.log('DB에 없습니다.');
-        }        
-      });
-    }
+      if (!productReady && !ocrReady) {
+
+        chrome.runtime.sendMessage({
+          action: 'fetchProduct',
+          match_nv_mid: matchNvMid.current,
+        },
+        (response) => {
+          console.log(`response.url: ${response.url}`);
+          if (response.success 
+            && response.data 
+            && response.data.length > 0 
+            && Array.isArray(response.data)) { // TODO: API improvement required.          
+            console.log('DB에 있습니다.');
+            product.current = response.data[0];
+            chrome.runtime.sendMessage({
+              action: 'fetchOCR',
+              type: 'OT0',
+              prid: product.current?.prid,
+            },
+            (response) => {
+              if (response.data) {
+                ocr.current = response.data;             
+                console.log("ocr.current?.length:", ocr.current?.length)
+                setProductReady(true);
+                setOcrReady(true);
+                console.log("마지막 ocr 요소:", ocr.current?.[ocr.current?.length - 1]);              
+              } else if (response.error) {
+                console.error(response.error, response.url, response.prid);
+                console.log('ERROR: OCR 데이터가 없습니다.');    
+                setProductReady(true);              
+              }
+            });                  
+          } else if (response.error) {
+            console.error(response.error, response.url);  
+            console.log('DB에 없습니다?');   
+          } else {
+            console.log('DB에 없습니다.');
+          }        
+        });
+          }
+        }
           
     fetchData();
+  
+    if (!productReady && !ocrReady) {
+      console.log('No ocr or product data, rerendering...');
+      return;
+    } else {
+      console.log('ocr and product data detected!');
+    }
+    
+    document.addEventListener('mousemove', handleMouseMove); 
+
+    productStorage.getAllProductStates().then((data) => {
+      console.log('product states 확인:', data);    
+    });      
+
+    // chrome.tabs.onActivated.addListener(handleTabActivated);
+
+    return () => {
+      // chrome.tabs.onActivated.removeListener(handleTabActivated);      
+      document.removeEventListener('mousemove', handleMouseMove);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);        
+      }
+      console.log('App unmounted');
+    }
+  }, [productReady, ocrReady]);
+
+  // useEffect 부분 분리한 이후로 재렌더링 되지 않고 있음. 원래 재랜더링 되는 부분은 이제 보니 setImgInfo 부분이었던 듯.
+  useEffect(() => {
+
+    if (!productReady && !ocrReady) {
+      console.log('No ocr or product data: image processing skipped');
+      return ;
+    } else {
+      console.log('ocr detected!: go image processing')
+    }             
     
     const handleDetailFromBrand = async (detailFromBrand:HTMLElement) => {
         console.log('detailFromBrand detected');                                
@@ -223,8 +370,7 @@ export default function App() {
         processImages(detailFromBrand);                
     }
 
-    // 이미지 처리
-  
+    // 이미지 처리  
     const initialDetailFromBrand = document.querySelector('[id^="detailFromBrand"]');
     // 이미 나타나있는 경우, observer 없이 바로 처리
     if (initialDetailFromBrand instanceof HTMLElement && ocr.current && product.current) {
@@ -258,20 +404,23 @@ export default function App() {
       }); 
     
       return () => {
-        imageObserver.disconnect();      
+        imageObserver.disconnect();              
       };    
     }
 
 
-    return () => {     
+    return () => {           
       console.log('App unmounted');
     };
 
-  }, []);
+  }, [productReady, ocrReady]);
     
-  console.log("ocr 결과:", ocr.current);
-  console.log("product 결과:", product.current);
+  // console.log("ocr 결과:", ocr.current);
+  // console.log("product 결과:", product.current);
   console.log('app.tsx 렌더링 횟수: ', renderingCount.current)    
+
+  const isLoading = productReady ? ocrReady ? false : true : true;
+  console.log(`isLoading: ${isLoading}, productReady: ${productReady}, ocrReady: ${ocrReady}`);
 
   return (
     <>

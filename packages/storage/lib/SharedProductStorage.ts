@@ -1,4 +1,5 @@
 import { BaseStorage, createStorage, StorageType } from './base';
+// import { writeLogEntry } from '../../shared/lib/writeLogEntry';
 
 export interface ProductData {
     category: string;
@@ -9,7 +10,7 @@ export interface ProductStateMap {
     [product: string]: ProductData;
   }
   
-class SharedStateManager {
+class SharedProductStorage {
     private storage: BaseStorage<ProductStateMap>;
   
     constructor() {
@@ -32,13 +33,13 @@ class SharedStateManager {
       return await this.storage.get();
     }
   
-    async setProductState(product: string, data: Partial<ProductData>): Promise<void> {
+    async setProductState(product: string, caid: string): Promise<void> {
       await this.storage.set((prevState) => ({
         ...prevState,
         [product]: {
           ...prevState[product],
-          ...data,
           lastActiveTime: Date.now(),
+          caid: caid,
         },
       }));
     }
@@ -51,11 +52,29 @@ class SharedStateManager {
         });
       }
 
-    async removeAllProducts(callback:(obj:object) => void): Promise<void> {
-      for (const product in await this.getAllProductStates()) {
+    async removeAllProducts(callback:(obj:
+      { 
+        event_type: string; 
+        event_data: string | null; 
+        link: string | null; 
+        product: string | null; 
+      }) => Promise<void>):Promise<void> {
+        
+      for (const product in await this.getAllProductStates()) {        
+        // await writeLogEntry({
+        //   event_type: 'quit',
+        //   event_data: null,
+        //   link: null,
+        //   product: product,
+        // })
         callback({
-          
-        })
+          event_type: 'quit',
+          event_data: null,
+          link: null,
+          product: product
+        }).then(() => {
+          console.log('logged');
+        });
         await this.removeProduct(product);
       }
     }
@@ -72,7 +91,7 @@ class SharedStateManager {
   }
   
   // 사용 예시
-//   const sharedState = new SharedStateManager();
+//   const sharedState = new SharedProductStorage();
   
 //   // 특정 제품의 상태 가져오기
 //   sharedState.getProductState('productA').then((state) => {
@@ -125,4 +144,4 @@ class SharedStateManager {
 
 // }
 
-export const productStorage = new SharedStateManager();
+export const productStorage = new SharedProductStorage();
