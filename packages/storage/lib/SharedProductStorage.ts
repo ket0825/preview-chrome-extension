@@ -73,7 +73,7 @@ class SharedProductStorage {
           link: null,
           product: product
         }).then(() => {
-          console.log('logged');
+          console.log('[Quited]: ', product);
         });
         await this.removeProduct(product);
       }

@@ -3,26 +3,74 @@ import { productStorage } from '@chrome-extension-boilerplate/storage/index';
 import { writeLogEntry } from './utils/writeLogEntry';
 
 console.log('background loaded');
-console.log("Edit 'apps/chrome-extension/lib/background/index.ts' and save to reload.");
 
+// Storage 초기화 함수
+const clearProductStorage = async () => {
+  try {
+    const states = await productStorage.getAllProductStates();
+    for (const product in states) {
+      // inactive 로그 기록
+      await writeLogEntry({
+        event_type: 'inactive',
+        event_data: null,
+        link: null,
+        product: product
+      });
+    }
 
-// Example usage
-chrome.runtime.onInstalled.addListener(() => {
-  writeLogEntry({
-    event_type:'install', 
-    event_data: null, 
-    link: null,
-    product: null
+    productStorage.removeAllProducts(writeLogEntry).then(() => {
+      console.log('Product storage has been cleared');
     });
+
+  } catch (error) {
+    console.error('Error while clearing product storage:', error);
+  }
+};
+
+// 설치 시, 로그 기록
+chrome.runtime.onInstalled.addListener(async (details) => {
+  console.log('onInstalled', details.reason);
+  switch (details.reason) {
+    case 'install':
+      // 신규 설치 시
+      await writeLogEntry({
+        event_type: 'install',
+        event_data: null,
+        link: null,
+        product: null
+      });
+      break;
+
+    case 'update':
+      // 업데이트 시
+      await writeLogEntry({
+        event_type: 'update',
+        event_data: null,
+        link: null,
+        product: null
+      });
+      await clearProductStorage();
+      break;
+
+    case 'chrome_update':
+    case 'shared_module_update':
+      // 크롬 업데이트나 공유 모듈 업데이트 시
+      break;
+
+    default:
+      // reload 등 기타 경우
+      console.log('Clearing product storage due to extension reload/restart');
+      await clearProductStorage();
+  }
 });
 
-// You can also expose a method for other parts of your extension to use
+// writeLog listener
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'writeLog') {
     writeLogEntry({
-      event_data: message.event_data, 
-      event_type: message.event_type, 
-      link: message.link, 
+      event_data: message.event_data,
+      event_type: message.event_type,
+      link: message.link,
       product: message.product
     }).then((result) => {
 
@@ -31,21 +79,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         productStorage.removeProduct(message.product);
       }
     });
-    sendResponse({success: true});
+    sendResponse({ success: true });
   }
   return true;
 });
 
-
+// Extension suspend 시, 모든 product 삭제 및 로그 기록
 chrome.runtime.onSuspend.addListener(() => {
   console.log('The extension has been suspended');
-  productStorage.removeAllProducts(writeLogEntry).then(() => { // onMessage로는 OK.
+  productStorage.removeAllProducts(writeLogEntry).then(() => {
     console.log('All products have been removed');
-    }
+  }
   );
 });
 
-
+// FetchProduct request listener
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'fetchProduct') {
     const match_nv_mid: string = request.match_nv_mid;
@@ -74,6 +122,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return false;
 });
 
+// FetchOCR request listener
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'fetchOCR') {
     const type: string = request.type // 'OT0'
@@ -86,6 +135,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .then(response => response.json())
       .then(data => {
         sendResponse({ success: true, data: data, url: url, prid: prid });
+        console.log(`data: ${JSON.stringify(data)}, ${JSON.stringify(typeof data)}`)
       })
       .catch(error => {
         sendResponse({ success: false, error: error.message, url: url, prid: prid });
@@ -95,7 +145,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return false;
 })
 
-
+// FetchReview request listener
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'fetchReview') {
     const type: string = request.type // 'RT0'
