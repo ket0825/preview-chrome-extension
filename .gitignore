@@ -24,5 +24,9 @@ apps/chrome-extension/public/manifest.json
 .vscode
 *.zip
 *.css
+*.jpg
 
+# chrome-extension
+**/manifest.js
+**/manifest.json
 

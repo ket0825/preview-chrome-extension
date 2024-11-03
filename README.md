@@ -1,46 +1,46 @@
 <div align="center">
-<img src="chrome-extension/public/icon-128.png" alt="logo"/>
-<h1> Chrome Extension Boilerplate with<br/>React + Vite + TypeScript</h1>
+<img src="chrome-extension/public/icon-128.jpg" alt="logo"/>
+<h1> PREVIEW Chrome Extension<br/>React + Vite + TypeScript</h1>
 
 ![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![](https://img.shields.io/badge/Typescript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![](https://badges.aleen42.com/src/vitejs.svg)
-![GitHub action badge](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/actions/workflows/build-zip.yml/badge.svg)
-<img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/Jonghakseo/chrome-extension-boilerplate-react-viteFactions&count_bg=%23#222222&title_bg=%23#454545&title=😀&edge_flat=true" alt="hits"/>
 
-> This boilerplate
-> has [Legacy version](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/tree/legacy)
+> Used boilerplate From 
+> [Jonghakseo](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite)
 
 </div>
 
-> [!TIP]
-> This project is listed in the [Awesome Vite](https://github.com/vitejs/awesome-vite)
-
-> [!IMPORTANT]
-> Share storage state between every page
->
-> https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/assets/53500778/1992e46c-032a-4743-bbd2-c421757517d7
+> [!NOTE]
+> 이 프로젝트는 N사 가격비교 서비스에서 제품 설명과 함께 그에 맞는 리뷰를 제공합니다
 
 ## Table of Contents
 
-- [Intro](#intro)
-- [Features](#features)
-- [Structure](#structure)
-    - [ChromeExtension](#chrome-extension)
-    - [Packages](#packages)
-    - [Pages](#pages)
-- [Install](#install)
-    - [Procedures](#procedures)
-        - [Chrome](#chrome)
-        - [Firefox](#firefox)
-- [Reference](#reference)
-- [Star History](#starhistory)
-- [Contributors](#contributors)
-
-## Intro <a name="intro"></a>
-
-This boilerplate is made for creating chrome extensions using React and Typescript.
-> The focus was on improving the build speed and development experience with Vite(Rollup) & Turborepo.
+- [Table of Contents](#table-of-contents)
+- [Features ](#features-)
+- [Install ](#install-)
+- [Procedures: ](#procedures-)
+- [And next, depending on the needs:](#and-next-depending-on-the-needs)
+  - [For Chrome: ](#for-chrome-)
+- [Structure ](#structure-)
+  - [ChromeExtension ](#chromeextension-)
+  - [Pages ](#pages-)
+- [Reference ](#reference-)
+- [Contributors ](#contributors-)
+- [Privacy Policies ](#privacy-policies-)
+  - [Introduction](#introduction)
+  - [Information We Collect](#information-we-collect)
+    - [Personal Information](#personal-information)
+    - [Usage Data](#usage-data)
+  - [How We Use Your Information](#how-we-use-your-information)
+  - [Data Storage and Security](#data-storage-and-security)
+  - [Third-Party Services](#third-party-services)
+    - [Google OAuth2](#google-oauth2)
+  - [Your Rights](#your-rights)
+  - [Changes to This Policy](#changes-to-this-policy)
+  - [Data Retention](#data-retention)
+  - [Children's Privacy](#childrens-privacy)
+  - [Contact Us](#contact-us)
 
 ## Features <a name="features"></a>
 
@@ -52,7 +52,6 @@ This boilerplate is made for creating chrome extensions using React and Typescri
 - [Prettier](https://prettier.io/)
 - [ESLint](https://eslint.org/)
 - [Chrome Extension Manifest Version 3](https://developer.chrome.com/docs/extensions/mv3/intro/)
-- Custom HMR(Hot Module Rebuild) Plugin
 
 ## Install <a name="install"></a>
 
@@ -77,17 +76,6 @@ This boilerplate is made for creating chrome extensions using React and Typescri
 4. Find and Click - `Load unpacked extension`
 5. Select - `dist` folder at root
 
-### For Firefox: <a name="firefox"></a>
-
-1. Run:
-    - Dev: `pnpm dev:firefox` (it's run parallel with `pnpm dev-server` automatically)
-    - Prod: `pnpm build:firefox`
-2. Open in browser - `about:debugging#/runtime/this-firefox`
-3. Find and Click - `Load Temporary Add-on...`
-4. Select - `manifest.json` from `dist` folder at root
-
-### <i>Remember in firefox you add plugin in temporary mode, that's mean it's disappear after close browser, you must do it again, on next launch.</i>
-
 ## Structure <a name="structure"></a>
 
 ### ChromeExtension <a name="chrome-extension"></a>
@@ -100,62 +88,87 @@ Main app with background script, manifest
   manifest.json)
 - `public/content.css` - content css for user's page injection
 
-### Packages <a name="packages"></a>
-
-Some shared packages
-
-- `dev-utils` - utils for chrome extension development (manifest-parser, logger)
-- `hmr` - custom HMR plugin for vite, injection script for reload/refresh, hmr dev-server
-- `shared` - shared code for entire project. (types, constants, custom hooks, components, etc.)
-- `tsconfig` - shared tsconfig for entire project.
-
 ### Pages <a name="pages"></a>
 
-- `content` - [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/) for chrome
-  extension (`content_scripts` in manifest.json)
 - `content-ui` - [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/) for render UI in
   user's page (`content_scripts` in manifest.json)
-- `devtools` - [devtools](https://developer.chrome.com/docs/extensions/mv3/devtools/#creating) for chrome
-  extension (`devtools_page` in manifest.json)
-- `devtools-panel` - devtools panel for [devtools](pages/devtools/src/index.ts)
-- `newtab` - [new tab](https://developer.chrome.com/docs/extensions/mv3/override/) for chrome
-  extension (`chrome_url_overrides.newtab` in
-  manifest.json)
-- `options` - [options](https://developer.chrome.com/docs/extensions/mv3/options/) for chrome extension (`options_page`
-  in manifest.json)
-- `popup` - [popup](https://developer.chrome.com/docs/extensions/reference/browserAction/) for chrome
-  extension (`action.default_popup` in
-  manifest.json)
-- `sidepanel` - [sidepanel(Chrome 114+)](https://developer.chrome.com/docs/extensions/reference/sidePanel/) for chrome
-  extension (`side_panel.default_path` in manifest.json)
 
 ## Reference <a name="reference"></a>
 
-- [Vite Plugin](https://vitejs.dev/guide/api-plugin.html)
+- [Boilerplate](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite)
 - [ChromeExtension](https://developer.chrome.com/docs/extensions/mv3/)
-- [Rollup](https://rollupjs.org/guide/en/)
-- [Turborepo](https://turbo.build/repo/docs)
-- [Rollup-plugin-chrome-extension](https://www.extend-chrome.dev/rollup-plugin)
 
-## Star History <a name="starhistory"></a>
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Jonghakseo/chrome-extension-boilerplate-react-vite&type=Date)](https://star-history.com/#Jonghakseo/chrome-extension-boilerplate-react-vite&Date)
 
 ## Contributors <a name="contributors"></a>
-
-This Boilerplate is made possible thanks to all of its contributors.
-
-<a href="https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/graphs/contributors">
-  <img width="500px" src="https://contrib.rocks/image?repo=Jonghakseo/chrome-extension-boilerplate-react-vite" alt="All Contributors"/>
-</a>
+- [9unu](https://github.com/9unu)
+- [DongyubKwak](https://github.com/DongyubKwak)
+- [KHUjsLee](https://github.com/KHUjsLee)
 
 ---
+Made by [EunTaeKim](https://ket0825.tistory.com/)
 
-## Special Thanks To
+## Privacy Policies <a name="privacy-policies"></a>
+- Last Updated: November 3, 2024
 
-| <a href="https://jb.gg/OpenSourceSupport"><img width="40" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo."></a> | <a href="https://www.linkedin.com/in/j-acks0n"><img width="40" style="border-radius:50%" src='https://avatars.githubusercontent.com/u/23139754' alt='Jackson Hong'/></a> |
-|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+### Introduction
 
----
+This Privacy Policy describes how our Chrome Extension ("we," "our," or "us") collects, uses, and shares your personal information when you use our extension.
 
-Made by [Jonghakseo](https://nookpi.tistory.com/)
+### Information We Collect
+
+#### Personal Information
+- Email address (obtained through Google OAuth2)
+- Unique user identifier derived from your Google account
+
+#### Usage Data
+- Product viewing history
+- Interaction with product pages
+- Service usage patterns and preferences
+
+### How We Use Your Information
+
+We use the collected information for:
+- User authentication and account management
+- Tracking product viewing history
+- Service improvement and feature development
+- Expanding our product coverage
+- Analytics and usage patterns analysis
+- Personalizing your experience
+
+### Data Storage and Security
+
+We implement appropriate security measures to protect your personal information. Your data is stored securely and accessed only by authorized personnel.
+
+### Third-Party Services
+
+#### Google OAuth2
+We use Google OAuth2 for user authentication. When you log in, we access:
+- Your Google email address
+- Basic profile information
+
+Please review Google's Privacy Policy to understand how they handle your data.
+
+### Your Rights
+
+You have the right to:
+- Access your personal data
+- Request correction of your data
+- Request deletion of your data
+- Opt-out of certain data collection
+- Export your data
+
+### Changes to This Policy
+
+We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.
+
+### Data Retention
+
+We retain your personal information for as long as necessary to provide our services and fulfill the purposes outlined in this Privacy Policy.
+
+### Children's Privacy
+
+Our service is not intended for users under the age of 13. We do not knowingly collect information from children under 13.
+
+### Contact Us
+
+If you have any questions about this Privacy Policy, please contact us at ket0825@gmail.com.
